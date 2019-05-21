@@ -14,8 +14,8 @@ void RankingCompare(int level); // level 의 ranking data 비교
 void LevelRanking(int level); // level 의 ranking 출력
 int StageClear();//스테이지 완료 확인
 void ClearView();//스테이지 완료 화면
-voud Re();//재시작
-
+void Replay();//재시작
+void Newplay();
 
 char rankname[5][5][10]; //level별 상위 5명의 ranking data 이름
 int rankcount[5][5]; // level별 상위 5명의 ranking data count 갯수
@@ -85,6 +85,31 @@ reinput : while(1)
 	}
 	return ;
 }
+//맵
+void displayHelp();
+
+void displayHelp() {
+	//char input;
+
+   system("cls");
+   printf("       hello ");
+   for (int i = 0; i < 10; i++) {
+      printf("%c", username[i]);
+   }
+   printf("\n\n");
+   printf("h(왼쪽), j(아래), k(위), l(오른쪽) \n");
+   printf("u(undo)\n");
+   printf("r(replay)\n");
+   printf("n(new)\n");
+   printf("e(exit)\n");
+   printf("s(save)\n");
+   printf("f(file load)\n");
+   printf("d(display help)\n");
+   printf("t(top)\n\n");
+   printf("아무키나 누르면 메인 메뉴로 이동합니다.\n");
+   //input = linux_kbhit();
+
+}
 //량킹
 void LevelRanking(int level)
 {
@@ -151,7 +176,10 @@ void RankingSave()
 {
 	int length;
 	ranksave = fopen("ranking.txt","w");
-
+	for(int i =0 ; i<5; i++)
+	{
+		RankingCompare(i);
+	}
 
   for(int i = 0; i<5 ; i++)
     {   fprintf(ranksave,"map %d\n",i+1);
@@ -233,10 +261,7 @@ void ClearView(){
 	  //DrawStage(); //스테이지 출력 함수 <- 나중에 바꿔주세욤
 	  //Printinfo(); // 정보출력 함수 <- 나중에 바꿔주세욤
 	  //PlayerMoveAction(); // 플레이어 이동 함수 <- 나중에 바꿔주세욤
-	  if(Restart == 1){ // 재시작
-	    Restart = 0;
-	    break;
-	  }
+
 	  if(StageClear()){ // 클리어 확인
 
 	    if(RoundNum < MAXSTAGE - 1){ // 다음 스테이지 출력
@@ -244,19 +269,28 @@ void ClearView(){
 	      printf("Let's go Next Stage!\n");
 
 	      RoundNum++;
+				usercount[RoundNum] = 0;
 	      break;
 	    }
 	    else if(RoundNum == (MAXSTAGE - 1)){
 	      printf("★★★★★★You clear all stages!★★★★★★\n");
 	      printf("★★★★★★★★★★★Conglatulate★★★★★★★★★★★\n");
-
+				RankingSave();
 	      exit(0);
 	    }
 	  }
 	}
 }
 //재시작
-void Re(){
-  Restart = 1;
+void Replay(){
+
   return ;
+}
+
+void Newplay(){
+	for(int i = 0; i<5;i++){
+		usercount[i] = 0;
+	}
+
+	return ;
 }
