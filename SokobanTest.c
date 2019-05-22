@@ -130,10 +130,10 @@ void loadMap() {
 		int num_O[5] = {0, 0, 0, 0, 0};
 
 		i = 0;
-		pStr = fgets(strTemp, sizeof(strTemp), pFile);
+		fgets(strTemp, sizeof(strTemp), pFile);
 		while(strTemp[0] != 50)
 		{
-			pStr = fgets(strTemp, sizeof(strTemp), pFile);
+			fgets(strTemp, sizeof(strTemp), pFile);
 
 			for (sa = 0; strTemp[sa];) {
 				if (strTemp[0] == 50) {
@@ -156,7 +156,7 @@ void loadMap() {
 		i = 0;
 		while (strTemp[0] != 51)
 		{
-			pStr = fgets(strTemp, sizeof(strTemp), pFile);
+			fgets(strTemp, sizeof(strTemp), pFile);
 
 			for (sa = 0; strTemp[sa];) {
 				if (strTemp[0] == 51) {
@@ -178,7 +178,7 @@ void loadMap() {
 		i = 0;
 		while (strTemp[0] != 52)
 		{
-			pStr = fgets(strTemp, sizeof(strTemp), pFile);
+			fgets(strTemp, sizeof(strTemp), pFile);
 
 			for (sa = 0; strTemp[sa];) {
 				if (strTemp[0] == 52) {
@@ -200,7 +200,7 @@ void loadMap() {
 		i = 0;
 		while (strTemp[0] != 53)
 		{
-			pStr = fgets(strTemp, sizeof(strTemp), pFile);
+			fgets(strTemp, sizeof(strTemp), pFile);
 
 			for (sa = 0; strTemp[sa];) {
 				if (strTemp[0] == 53) {
@@ -222,7 +222,7 @@ void loadMap() {
 		i = 0;
 		while (strTemp[0] != 101)
 		{
-			pStr = fgets(strTemp, sizeof(strTemp), pFile);
+			fgets(strTemp, sizeof(strTemp), pFile);
 
 			for (sa = 0; strTemp[sa];) {
 				if (strTemp[0] == 101) {
