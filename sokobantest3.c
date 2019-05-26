@@ -55,14 +55,16 @@ int main()
 {	
 	StartView();
 	loadMap();
+
+	int input;
 	
 	userlevel=0; //레벨1에 해당하는 맵 출력
 	while(1)
 	{
 		memcpy(map, stageData[userlevel], sizeof(map));
-		for (int y = 0; y < 18; y++)
+		for (int y = 0; y < 30; y++)
 		{
-			for (int x = 0; x < 20; x++)
+			for (int x = 0; x < 30; x++)
 			{
 				if (map[y][x] == '@')
 				{
@@ -72,11 +74,16 @@ int main()
 				}
 			}
 		}
+
 		system("clear");
-		drawMap(userlevel);
-		sleep(10);
+
+		while(1)
+		{
+			drawMap();
+			PlayerMoveAction();
+		}
 	}
-	getch();
+	input = getch();
 
 	return 0;
 }
@@ -279,23 +286,25 @@ void loadMap() {
 void drawMap()
 {
 	int mapX, mapY;
-	for (mapY = 0; mapY < 30; mapY++)
+	for (mapY = 1; mapY < 31; mapY++)
 	{
-		for (mapX = 0; mapX < 30; mapX++)
+		for (mapX = 1; mapX < 31; mapX++)
 		{
-			//putchxy(mapX, mapY, map[mapY][mapX]);
-			gotoxy(mapX, mapY);
-			//move_cur(mapX, mapY);
-			
-			putchar(map[mapY][mapX]);
-			if (map[mapY][mapX] == '\0') {
+			if(map[mapY-1][mapX-1] == '\0') {
 				break;
 			}
+			gotoxy(mapX, mapY);			
+			putchar(map[mapY-1][mapX-1]);
+			/*if (map[mapY][mapX] == '\0') {
+				break;
+			}*/
 		}
-		/*if (map[mapY][mapX + 1] == '\0') {
+		/*if (map[mapY][mapX] == '\n') {
 			break;
 		}*/
 	}
+	gotoxy(levelX, levelY);
+	putchar('@');
 }
 
 void PlayerMoveAction()

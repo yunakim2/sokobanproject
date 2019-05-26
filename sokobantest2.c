@@ -60,9 +60,9 @@ int main()
 	while(1)
 	{
 		memcpy(map, stageData[userlevel], sizeof(map));
-		for (int y = 0; y < 18; y++)
+		for (int y = 0; y < 30; y++)
 		{
-			for (int x = 0; x < 20; x++)
+			for (int x = 0; x < 30; x++)
 			{
 				if (map[y][x] == '@')
 				{
@@ -73,8 +73,10 @@ int main()
 			}
 		}
 		system("clear");
-		drawMap(userlevel);
-		sleep(10);
+		while(1) {
+			drawMap();
+		}
+		
 	}
 	getch();
 
@@ -296,6 +298,8 @@ void drawMap()
 			break;
 		}*/
 	}
+	gotoxy(levelX, levelY);
+	putchar('@');
 }
 
 void PlayerMoveAction()
