@@ -79,6 +79,7 @@ int main()
 		{
 			drawMap();
 			PlayerMoveAction();
+			PrintInfo();
 		}
 	}
 	input = getch();
@@ -310,7 +311,7 @@ void PlayerMoveAction()
 	int dx, dy;
 	char ch;
 
-	ch=getchar();
+	ch=getch();
 	
 	if(ch=='e')
 	{
@@ -320,10 +321,33 @@ void PlayerMoveAction()
 	{
 		Replay();
 	}
+	else if(ch == 'u')
+	{
 
+	}
+	else if(ch == 'n')
+	{
+
+	}
+	else if(ch == 's')
+	{
+
+	}
+	else if(ch == 'f')
+	{
+
+	}
+	else if(ch == 'd')
+	{
+		displayHelp();
+	}
+	else if(ch == 't')
+	{
+
+	}
 	else if(ch=='h'&&ch=='j'&&ch=='k'&&ch=='l')
 	{
-		ch=getchar();
+		ch=getch();
 		switch(ch)
 		{
 			case 'h':
