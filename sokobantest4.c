@@ -34,7 +34,7 @@ void SokobanfileUproad(); // 소코반 파일 업로드
 
 
 char stageData[6][30][30];//맵 입력받기
-char map[30][30];//스테이지별 맵 출력하기위해 사용
+char map[5][30][30];//스테이지별 맵 출력하기위해 사용
 int levelX, levelY;//좌표
 
 char rankname[5][5][10]; //level별 상위 5명의 ranking data 이름
@@ -64,11 +64,11 @@ int main()
 		{
 			for (int x = 0; x < 30; x++)
 			{
-				if (map[y][x] == '@')
+				if (map[userlevel][y][x] == '@')
 				{
 					levelX = x;
 					levelY = y;
-					map[y][x] = ' ';
+					map[userlevel][y][x] = ' ';
 				}
 			}
 		}
@@ -290,13 +290,13 @@ void drawMap()
 	int mapX, mapY;
 	for (mapY = 1; mapY < 31; mapY++)
 	{
-		for (mapX = 1; mapX < 31; mapX++)
+		for (mapX = 0; mapX < 30; mapX++)
 		{
-			if(map[mapY-1][mapX-1] == '\0') {
+			if(map[userlevel][mapY-1][mapX] == '\0') {
 				break;
 			}
 			gotoxy(mapX, mapY);			
-			putchar(map[mapY-1][mapX-1]);
+			putchar(map[userlevel][mapY-1][mapX]);
 			/*if (map[mapY][mapX] == '\0') {
 				break;
 			}*/
@@ -330,7 +330,7 @@ void PlayerMoveAction()
 	}
 	else if(ch == 't')
 	{
-    int ch2 == getch();
+    int ch2 = getch();
     if(ch2 == 1 || ch2 == 2 || ch2 ==3 || ch2 ==4 || ch2 == 5)
     {
       LevelRanking(--ch2);
@@ -360,9 +360,9 @@ void PlayerMoveAction()
     displayHelp();
     
     }
-	else if(ch=='h'&&ch=='j'&&ch=='k'&&ch=='l')
+	else if(ch=='h'||ch=='j'||ch=='k'||ch=='l')
 	{
-		ch=getch();
+		//ch=getch();
 		switch(ch)
 		{
 			case 'h':
@@ -376,24 +376,24 @@ void PlayerMoveAction()
 		}
 		if (levelY+dy>=0&&levelX+dx>=0)
 		{
-		if (map[levelY+dy][levelX+dx] == '#')
+		if (map[userlevel][levelY-1+dy][levelX+dx] == '#')
 		{
 			return;
 		}
 		}
-		if (map[levelY+dy][levelX+dx] == '0')
+		if (map[userlevel][levelY-1+dy][levelX+dx] == '0')
 		{
-			if (stageData[userlevel][levelY+dy*2][levelX+dx*2] = ' ')
+			if (stageData[userlevel][levelY-1+dy*2][levelX+dx*2] = ' ')
 			{
-				map[levelY+dy][levelX+dx] = ' ';
-				map[levelY+dy*2][levelX+dx*2] = '0';
+				map[userlevel][levelY-1+dy][levelX+dx] = ' ';
+				map[userlevel][levelY-1+dy*2][levelX+dx*2] = '0';
 			}
-			else if (stageData[userlevel][levelY+dy*2][levelX+dx*2] == '.')
+			else if (stageData[userlevel][levelY-1+dy*2][levelX+dx*2] == '.')
 			{
-				map[levelY+dy][levelX+dx] = '.';
-				map[levelY+dy*2][levelX+dx*2] = '0';
+				map[userlevel][levelY-1+dy][levelX+dx] = '.';
+				map[userlevel][levelY-1+dy*2][levelX+dx*2] = '0';
 			}
-			else if (stageData[userlevel][levelY+dy*2][levelX+dx*2] == '#')
+			else if (stageData[userlevel][levelY-1+dy*2][levelX+dx*2] == '#')
 			{
 				return;
 			}
@@ -586,7 +586,7 @@ int StageClear(){
   int x, y;
   for(x = 0; x < 20; x++){
     for(y = 0; y < 18; y++){
-      if(stageData[userlevel][x][y] == '.' && map[x][y] != 0){
+      if(stageData[userlevel][x][y] == '.' && map[userlevel][x][y] != 0){
         return 0 ;
       }
     }
