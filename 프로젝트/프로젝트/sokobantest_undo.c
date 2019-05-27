@@ -56,7 +56,7 @@ char inputname[10];  // input data
 int usercount[5]={0,0,0,0,0};
 int userlevel = 0;
 
-int undo1[STAGE][Y][X]; // 언두 맵 저장 배열
+int undo1[Y][X]; // 언두 맵 저장 배열
 int save_count = 0; // 언두 맵 저장 횟수
 int undo_count = 5; // 언두 가능 횟수
 
@@ -690,14 +690,12 @@ void UndoMap()
 	// 언두 맵 저장횟수가 5번이 넘었을경우
 	if (save_count >= 5)
 	{
-		for (int i = 1; i < STAGE; i++)
+		
+		for (int j = 0; j < Y; j++)
 		{
-			for (int j = 0; j < Y; j++)
+			for (int k = 0; k < X; k++)
 			{
-				for (int k = 0; k < X; k++)
-				{
 					undo1[i - 1][j][k] = undo1[i][j][k]; // 마지막 언두 저장맵을 버림
-				}
 			}
 		}
 		save_count--;
@@ -707,7 +705,7 @@ void UndoMap()
 	{
 		for (int k = 0; k < X; k++)
 		{
-			undo1[save_count][j][k] = map[j][k];
+			undo1[j][k] = map[j][k];
 		}
 	}
 	save_count++;
@@ -727,7 +725,7 @@ void Undo()
 	{
 		for (int j = 0; j < X; j++)
 		{
-			map[j][i] = undo1[userlevel][i][j]; // 현재 맵을 언두맵에서 저장한 맵으로 대체함
+			map[j][i] = undo1[i][j]; // 현재 맵을 언두맵에서 저장한 맵으로 대체함
 		}
 	}
 	// @의 좌표값을 저장함
