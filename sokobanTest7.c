@@ -41,7 +41,10 @@ void UndoMap(); //언두맵
 
 char stageData[6][30][30];//맵 입력받기
 char map[5][30][30];//스테이지별 맵 출력하기위해 사용
+char undo[5][30][30];//undo맵
 int levelX, levelY;//좌표
+int u_levelX[5];//undo맵에서 사용자X 좌표
+int u_levelY[5];//undo맵에서 사용자Y 좌표
 
 char rankname[5][5][10]; //level별 상위 5명의 ranking data 이름
 int rankcount[5][5]; // level별 상위 5명의 ranking data count 갯수
@@ -56,9 +59,8 @@ char inputname[10];  // input data
 int usercount[5] = { 0,0,0,0,0 };
 int userlevel = 0;
 
-int undo1[STAGE][X][Y]; // 언두 맵 저장 배열
-int save_count = 0; // 언두 맵 저장 횟수
-int undo_count = 5; // 언두 가능 횟수
+int undosaveCount; // 언두 맵 저장 횟수
+int undoCount; // 언두 가능 횟수
 
 //메인
 int main()
@@ -79,8 +81,8 @@ int main()
             if (map[userlevel][y][x] == '@')
             {
                levelX = x;
-               levelY = y;
-               map[userlevel][y][x] = ' ';
+               levelY = y+1;
+               //map[userlevel][y][x] = ' ';
             }
          }
       }
@@ -88,7 +90,7 @@ int main()
       MapClear();
       while (1)
       {
-         MapClear();
+         //MapClear();
          drawMap();
          PlayerMoveAction();
       }
@@ -101,7 +103,7 @@ int main()
 void MapClear()
 {
    system("clear");
-   system("clear");
+   //system("clear");
 }
 //로딩
 void StartView()
@@ -342,15 +344,19 @@ void PlayerMoveAction()
    switch (ch)
    {
    case 'h':
+      UndoMap();//undo맵 저장
       usercount[userlevel]++;
       dx = -1; dy = 0; break;
    case 'j':
+      UndoMap();//undo맵 저장
       usercount[userlevel]++;
       dx = 0; dy = 1; break;
    case 'k':
+      UndoMap();//undo맵 저장
       usercount[userlevel]++;
       dx = 0; dy = -1; break;
    case 'l':
+      UndoMap();//undo맵 저장
       usercount[userlevel]++;
       dx = 1; dy = 0; break;
    }
@@ -369,7 +375,6 @@ void PlayerMoveAction()
    {
       if (map[userlevel][levelY -1 + 2 * dy][levelX + 2 * dx] == '.') // 그 앞이 공백이라면
       {
-         UndoMap(); // 언두 맵 저장
          map[userlevel][levelY - 1 + dy][levelX + dx] = '@'; // 움직인 후 플레이어 좌표 저장
          map[userlevel][levelY - 1 + 2 * dy][levelX + 2 * dx] = '$'; // 움직인 후 상자 좌표 저장
       }
@@ -381,17 +386,16 @@ void PlayerMoveAction()
    }
    if (map[userlevel][levelY - 1 + dy][levelX + dx] == '.') // 플레이어가 움직인다면
    {
-      UndoMap(); // 언두 맵 저장
    }
 
    if (map[userlevel][levelY - 1 + dy][levelX + dx] == 'O') // 'O'를 만난다면
    {
-      UndoMap(); // 언두 맵 저장
+      
    }
 
    if (map[userlevel][levelY - 1 + 2 * dy][levelX + 2 * dx] == 'O' && map[userlevel][levelY - 1 + 2 * dy][levelX + 2 * dx] == '$') // 상자를 밀고 있고, 상자 앞에 'O'가 있다면
    {
-      UndoMap(); // 언두 맵 저장
+      
       map[userlevel][levelY - 1 + 2 * dy][levelX + 2 * dx] = '$'; // 상자를 앞으로 움직임
    }
 
@@ -409,7 +413,7 @@ void PlayerMoveAction()
 }
 void Option(char ch)
 {
-   int t;
+   int t, count;
    char ch2;
    if (((((((ch != 'h' && ch != 'j') && ch != 'k') && ch != 'l') && ch != 'H') && ch != 'J') && ch != 'K') && ch != 'L')
    {
@@ -479,16 +483,14 @@ void Option(char ch)
       }
    case 'u':
    case 'U':
+      count = undosaveCount <= 6 ? undosaveCount : 6;
+      if(undoCount < count) {
          Undo();
-         break;
+      }
+      break;
    }
 
-
-
-
    return;
-
-
 
 }
 
@@ -821,69 +823,53 @@ int getch(void)
 }
 // 언두 맵 저장
 void UndoMap()
-{
-
-   // 언두 맵 저장횟수가 5번이 넘었을경우
-   if (save_count >= 5)
-   {
-      for (int m = 0; m < STAGE; m++)
-      {
-         for (int j = 0; j < Y; j++)
-         {
-            for (int k = 0; k < X; k++)
-            {
-               undo1[m - 1][j][k] = undo1[m][j][k]; // 마지막 언두 저장맵을 버림
-            }
-         }
-      }
-      save_count--;
-   }
-
-   // 언두를 위한 맵 저장
-   for (int j = 0; j < Y; j++)
-   {
-      for (int k = 0; k < X; k++)
-      {
-         undo1[save_count][j][k] = map[userlevel][j][k];
-      }
-   }
-
-   save_count++;
+{	
+	for (int i = 4; i > 0; i--) {
+		for (int j = 0; j < 30; j++) {
+			for (int k = 0; k < 30; k++) {
+				undo[i][j][k] = undo[i - 1][j][k];
+			}
+		}
+		undo[i];
+		u_levelX[i] = u_levelX[i - 1];
+		u_levelY[i] = u_levelY[i - 1];
+	}
+	MapClear();
+	
+	
+	for(int j = 0; j < 30; j++) {
+	    for (int k = 0; k < 30; k++) {
+		undo[0][j][k] = map[userlevel][j][k];
+				
+	    }
+	}
+	u_levelX[0] = levelX;
+	u_levelY[0] = levelY;
+	undosaveCount++;
 }
 // 언두 실행
 void Undo()
 {
-   char input;
-   MapClear();
-   printf("실행취소\n");
-   input = getch();
-   /*int undo_x = 0, undo_y = 0;
+	for (int j = 0; j < 30; j++) {
+		for (int k = 0; k < 30; k++) {
+			map[userlevel][j][k] = undo[0][j][k];
+		}
+	}
 
-   if ((undo_count < 1) || ((5 - undo_count) >= usercount[userlevel]))
-      return; // 언두 카운트가 0이거나 무브 카운트가 0인데 언두 가능 횟수가 남아 있을 경우 언두를 실행하지 않음
+	levelX = u_levelX[0];
+	levelY = u_levelY[0];
 
-   undo_count--;
-   save_count--;
-   for (int i = 0; i < Y; i++)
-   {
-      for (int j = 0; j < X; j++)
-      {
-         map[userlevel][j][i] = undo1[userlevel][i][j]; // 현재 맵을 언두맵에서 저장한 맵으로 대체함
-      }
-   }
-   // @의 좌표값을 저장함
+	for (int i = 0; i < 4; i++) {
+		for (int j = 0; j < 30; j++) {
+			for (int k = 0; k < 30; k++) {
+				undo[i][j][k] = undo[i + 1][j][k];
+			}
+			undo[i][j];
+		}
 
-   for (int i = 0; i < Y; i++)
-   {
-      for (int j = 0; j < X; j++)
-      {
-         if (map[userlevel][i][j] == '@')
-         {
-            undo_x = j;
-            undo_y = i;
-         }
-      }
-   }
-   levelX = undo_x; // 플레이어 x좌표 조정
-   levelY = undo_y;*/
+		u_levelX[i] = u_levelX[i + 1];
+		u_levelY[i] = u_levelY[i + 1];
+	}
+	undoCount++;
 }
+
