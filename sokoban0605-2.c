@@ -71,31 +71,20 @@ int main()
    userlevel = 0; //레벨에 해당하는 맵 출력
    while (1)
    {
-      for(int i = 0; i<5; i++) {//레벨
-		for (int j = 0; j < 30; j++) { //열
-			for (int z = 0; z < 30; z++) { // 행
-				map[i][j][z] = stageData[i][j][z];
-				if (map[userlevel][j][z] == '@') // 사용자(@) 찾아서 좌표 지정
-				{
-					levelX = z + 1;
-					levelY = j + 1;
-				}
-				if (map[i][j][z] == '\n' || map[i][j][z] == '\0') {
-					break;
-				}
-			}
-			if (map[i][j][0] == '\0') {
-				break;
-			}
-		}
-	}
-      //playerreset();
+	   for (int k; k < 5; k++) {
+		   for (int i = 0; i < 30; i++) {
+			   for (int j = 0; j < 30; j++) {
+				   map[k][j][i] = stageData[k][j][i];
+			   }
+		   }
+	   }
+      playerreset(); // 플레이어 @ 위치 찾기
 
       MapClear();
       while (1)
-      {
+	  {
          drawMap();//맵 그리기
-         ClearView();
+         ClearView(); // 움직임 동작, 게임키, 스테이지완료화면
          if (return_bool) {
             return 0;
          }
@@ -110,7 +99,7 @@ void MapClear()
 
 }
 
-void playerreset() {
+void playerreset() { // 플레이어 위치 찾기
    for (int y = 0; y < 30; y++)
    {
       for (int x = 0; x < 30; x++)
@@ -331,6 +320,7 @@ void drawMap()
 {
 	
    int mapX, mapY;
+   
    for (mapY = 1; mapY < 31; mapY++) //맵이 출력될 y좌표
    {
       for (mapX = 1; mapX < 31; mapX++) //맵이 출력될 x좌표
@@ -347,21 +337,19 @@ void drawMap()
    mY = mapY;
    gotoxy(levelX, levelY + 2); // '@'위치로 이동
    putchar('@'); // '@' 출력
-   gotoxy(3, 1); //x좌표 6, y좌표 1로 이동
-   printf("Hello %s", username);//hello username 출력
-   gotoxy(mapX, mapY);
-   printf("(Command)");
-   printf("%3c", ch);
 }
 
 void PlayerMoveAction()
 {
+	gotoxy(3, 1); //x좌표 6, y좌표 1로 이동
+	printf("Hello %s", username);//hello username 출력
+	
    int dx = 0, dy = 0;
    char ch1;
 
    ch1 = getch();
    ch = ch1;
-
+   
    switch (ch1)
    {
    case 'h':
@@ -436,7 +424,7 @@ void PlayerMoveAction()
       else if (dy != 0 && dx == 0)
       {
          UndoMap();
-      }//
+      }
 
    }
    if (map[userlevel][levelY - 1 + dy][levelX - 1 + dx] == 'O') // 'O'를 만난다면
@@ -514,8 +502,8 @@ void Option(char ch1)
    case 'e':
    case'E':
       MapClear();
+	  rankingsave();
       printf("SEE YOU %s ...\n", username);
-      rankingsave();
       return_bool = 1;
       break;
 
@@ -549,9 +537,14 @@ void Option(char ch1)
       case '\n':
          rankingview(5);
          rank_bool = 0;
-         MapClear();
+		 MapClear();
          break;
       }
+   default : // h j k l e E d D r R n N t 이외의 문자를 입력받으면 ClearView 다시 호출
+	   MapClear();
+	   drawMap();
+	   ClearView();
+	   break;
    }
 
 
@@ -595,126 +588,90 @@ int StageClear() {
    int x, y;
    for (x = 0; x < 30; x++) {
       for (y = 0; y < 30; y++) {
-         if (map[userlevel][y][x] == 'O') {
+         if (map[userlevel][y][x] == 'O') { // 만약 맵에 구멍(O)이 있으면 0을 리턴
             return 0;
          }
       }
    }
-   return 1;
+   return 1; //그외에는 1을 리턴
 }
 //스테이지 완료화면
 void ClearView() {
    char ch1;
-   PlayerMoveAction();
-
+   PlayerMoveAction(); //움직임 함수 호출
+   if (return_bool) { // 만약 e를 눌렀을 경우 return
+	   return;
+   }
+   gotoxy(mX, mY); //맵의 끝부분으로 이동
+   printf("(Command)");
+   printf("%3c", ch); // 입력받은 키 출력
    if (StageClear()) { // 클리어 확인
 
       if (userlevel < 4) { // 다음 스테이지 출력
          MapClear();
+		 rankingsave(); //랭킹 저장
          printf("%d Stage Clear!\n", userlevel + 1);
          printf("Let's go Next Stage!\n");
 
-
-         rankingsave();
-         userlevel++;
-         usercount = 0;
+         userlevel++; // 다음 스테이지
+         usercount = 0; // 움직임 횟수 초기화
          printf("Please press any key");
          ch1 = getch();
          if (ch1 != 0) {
-            playerreset();
+            playerreset(); // 플레이어 위치 @ 확인
             return_bool = 0;
          }
 
       }
-      else if (userlevel == 4) {
+      else if (userlevel == 4) { // 모든 스테이지를 깼다면
          MapClear();
+		 rankingsave(); //랭킹저장
          printf("★★★★★★You clear all stages!★★★★★★\n");
          printf("★★★★★★★★★★★Conglatulate★★★★★★★★★★★\n");
-         rankingsave();
-         return_bool = 1;
+         return_bool = 1; // 시스템 종료
          return;
       }
       MapClear();
    }
 }
 
-//재시작
+//현재 스테이지 재시작
 void Replay() {
-   //memcpy(map, stageData[userlevel], sizeof(map));
-   while (1)
-   {
-     for (int i = 0; i < 5; i++) {
+	
+	for (int i = 0; i < 30; i++) {
 		for (int j = 0; j < 30; j++) {
-			for (int z = 0; z < 30; z++) {
-				map[i][j][z] = stageData[i][j][z];
-				if (map[userlevel][j][z] == '@')
-				{
-					levelX = z + 1;
-					levelY = j + 1;
-				}
-				if (map[i][j][z] == '\n' || map[i][j][z] == '\0') {
-					break;
-				}
-			}
-			if (map[i][j][0] == '\0') {
-				break;
-			}
+			map[userlevel][j][i] = stageData[userlevel][j][i]; //현재스테이지 맵 초기화
 		}
-	   } 
+	}
+	playerreset(); // 플레이어 위치 @확인
 
       MapClear();
-      while (1)
-      {
-         //         MapClear();
-         drawMap();
-         PlayerMoveAction();
-
-      }
-   }
+	  drawMap();
+	  ClearView();
+   
    return;
 }
-
+// 새로하기
 void Newplay() {
-   //memcpy(map, stageData[userlevel], sizeof(map));
-   MapClear();
-
-   usercount = 0;
-   undoCount = 5; // 언두 가능 횟수
-   userlevel = 0; //레벨1에 해당하는 맵 출력
-   while (1)
-   {
-      for (int i = 0; i < 5; i++) {
-		for (int j = 0; j < 30; j++) {
-			for (int z = 0; z < 30; z++) {
-				map[i][j][z] = stageData[i][j][z];
-				if (map[userlevel][j][z] == '@')
-				{
-					levelX = z + 1;
-					levelY = j + 1;
-				}
-				if (map[i][j][z] == '\n' || map[i][j][z] == '\0') {
-					break;
-				}
-			}
-			if (map[i][j][0] == '\0') {
-				break;
+	for (int k = 0; k < 5; k++) {
+		for (int i = 0; i < 30; i++) {
+			for (int j = 0; j < 30; j++) {
+				map[k][j][i] = stageData[k][j][i]; // 모든 스테이지 초기화
 			}
 		}
 	}
-		
-	//playerreset();
+	
+   MapClear();
 
-      MapClear();
-      while (1)
-      {
-         //         MapClear();
-         drawMap();
-         PlayerMoveAction();
+   usercount = 0; //움직임 횟수 초기화
+   undoCount = 5; // 언두 가능 횟수
+   userlevel = 0; //레벨1에 해당하는 맵 출력
+   playerreset(); // 플레이어 위치 @확인
 
-      }
-   }
-
-
+	MapClear();
+	drawMap();
+	ClearView();
+  
    return;
 }
 // 소코반 파일 저장
@@ -1204,6 +1161,7 @@ void rankinguproad()
    }
 
    fclose(rankopen);
+   MapClear();
    return;
 }
 
