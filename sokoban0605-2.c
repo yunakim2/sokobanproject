@@ -54,8 +54,7 @@ char inputname[11];  // input data
 int usercount=0; // user 움직인 횟수 count
 int userlevel = 0; // user 레벨
 
-int undosaveCount; // 언두 맵 저장 횟수
-int undoCount; // 언두 가능 횟수
+int undoCount = 0; // 언두 가능 횟수
 
 char ch,ch2; //ch - 키 입력 ch2- ranking 키 입력
 int mX, mY; // 맵 끝부분 위치
@@ -492,8 +491,7 @@ void Option(char ch1)
 
    case 'u':
    case 'U':
-      count = undosaveCount <= 6 ? undosaveCount : 6;
-      if (undoCount < count) {
+      if (undoCount < 5) {
          Undo();
       }
       break;
@@ -615,6 +613,7 @@ void ClearView() {
 
          userlevel++; // 다음 스테이지
          usercount = 0; // 움직임 횟수 초기화
+		 undoCount = 0;
          printf("Please press any key");
          ch1 = getch();
          if (ch1 != 0) {
@@ -648,7 +647,7 @@ void Replay() {
       MapClear();
 	  drawMap();
 	  ClearView();
-   
+	  undoCount = 0; // 언두 횟수 초기화
    return;
 }
 // 새로하기
@@ -667,7 +666,7 @@ void Newplay() {
    undoCount = 5; // 언두 가능 횟수
    userlevel = 0; //레벨1에 해당하는 맵 출력
    playerreset(); // 플레이어 위치 @확인
-
+   undoCount = 0; // 언두횟수 초기화
 	MapClear();
 	drawMap();
 	ClearView();
@@ -849,18 +848,16 @@ int getch(void)
 // 언두 맵 저장
 void UndoMap()
 {
-   for (int i = 4; i > 0; i--) {
+   for (int i = 4; i >= 0; i--) {
       for (int j = 0; j < 30; j++) {
          for (int k = 0; k < 30; k++) {
             undo[i][j][k] = undo[i - 1][j][k];//새로운 undomap을 저장하기 위해 배열을 한칸씩 뒤로 미루기
          }
       }
-      undo[i];
-      u_levelX[i] = u_levelX[i - 1];
-      u_levelY[i] = u_levelY[i - 1];
+	  undo[i];
+	  u_levelX[i] = u_levelX[i - 1];
+	  u_levelY[i] = u_levelY[i - 1];
    }
-   MapClear();
-
 
    for (int j = 0; j < 30; j++) {
       for (int k = 0; k < 30; k++) {
@@ -870,7 +867,6 @@ void UndoMap()
    }
    u_levelX[0] = levelX;
    u_levelY[0] = levelY;
-   undosaveCount++;
 }
 // 언두 실행
 void Undo()
@@ -880,7 +876,6 @@ void Undo()
          map[userlevel][j][k] = undo[0][j][k]; //map[userlevel]배열에 undo[0] 배열 저장
       }
    }
-
    levelX = u_levelX[0]; //사용자('@') X 좌표 undo맵의 '@' X 좌표로 설정
    levelY = u_levelY[0]; //사용자('@') Y 좌표 undo맵의 '@' Y 좌표로 설
 
@@ -889,11 +884,10 @@ void Undo()
          for (int k = 0; k < 30; k++) {
             undo[i][j][k] = undo[i + 1][j][k]; //undo를 실행한 후 이전에 저장되어있던 undo맵을 가장 최근의 undo맵으로 가져오기 위해 배열을 한칸씩 앞당기기
          }
-         undo[i][j];
+		 undo[i][j];
       }
-
-      u_levelX[i] = u_levelX[i + 1];
-      u_levelY[i] = u_levelY[i + 1];
+	  u_levelX[i] = u_levelX[i + 1];
+	  u_levelY[i] = u_levelY[i + 1];
    }
    undoCount++;
 }
