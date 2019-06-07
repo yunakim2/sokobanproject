@@ -99,7 +99,7 @@ int main()
 void MapClear()
 {
 	system("clear");
-
+	return;
 }
 
 void playerreset() { // 플레이어 위치 찾기
@@ -351,7 +351,9 @@ void PlayerMoveAction()
 {
 	gotoxy(1, 1); //x좌표 1, y좌표 1로 이동
 	printf("Hello %s", username);//hello username 출력
-
+	gotoxy(mX, mY + 3); //맵의 끝부분으로 이동
+	printf("(Command)");
+	printf("%3c", ch); // 입력받은 키 출력
 	int dx = 0, dy = 0;//플레이어 위치 증감
 	char ch1;
 
@@ -463,7 +465,6 @@ void PlayerMoveAction()
 
 	levelX += dx;
 	levelY += dy;
-
 }
 void Option(char ch1)
 {
@@ -613,13 +614,8 @@ void ClearView() {
 	if (return_bool) { // 만약 e를 눌렀을 경우 return
 		return;
 	}
-	gotoxy(mX, mY + 3); //맵의 끝부분으로 이동
-	printf("(Command)");
-	printf("%3c", ch); // 입력받은 키 출력
 	if (StageClear()) { // 클리어 확인
-
 		if (userlevel < 4) { // 다음 스테이지 출력
-			MapClear();
 			rank_bool = 1;
 			rankingcompare(userlevel);
 			rankingsave(); //랭킹 저장
@@ -635,16 +631,16 @@ void ClearView() {
 			if (ch1 != 0) {
 				playerreset(); // 플레이어 위치 @ 확인
 				return_bool = 0;
+				MapClear();
 			}
 
 		}
-		else if (userlevel == 4) { // 모든 스테이지를 깼다면
-			MapClear();
+		else if (userlevel == 4) { // 모든 스테이지를 깼다
+			printf("★★★★★★You clear all stages!★★★★★★\n");
+			printf("★★★★★★★★★★★Conglatulate★★★★★★★★★★★\n");
 			rank_bool = 1;
 			rankingcompare(userlevel);
 			rankingsave(); //랭킹저장
-			printf("★★★★★★You clear all stages!★★★★★★\n");
-			printf("★★★★★★★★★★★Conglatulate★★★★★★★★★★★\n");
 			return_bool = 1; // 시스템 종료
 			return;
 		}
@@ -1063,9 +1059,6 @@ void rankingview(int level)
 			printf("(Command)");
 			printf("%3c %c", ch, ch2);
 			input = getch();
-			MapClear();
-
-
 		}
 	}
 
