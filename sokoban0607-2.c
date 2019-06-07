@@ -1,6 +1,3 @@
-
-
-
 #include<stdio.h>
 #include<string.h>
 #include<stdlib.h>
@@ -592,6 +589,7 @@ void displayHelp() { //도움말 출력
 		printf("(Command)");
 		printf("%3c", ch);
 		input = getch();
+		return_bool = 0;
 		MapClear();
 	}
 }
@@ -625,7 +623,7 @@ void ClearView() {
 			rank_bool = 1;
 			rankingcompare(userlevel);
 			rankingsave(); //랭킹 저장
-			rank_bool = 0; 
+			rank_bool = 0;
 			printf("%d Stage Clear!\n", userlevel + 1);
 			printf("Let's go Next Stage!\n");
 
@@ -774,7 +772,7 @@ void SokobanfileUproad() // 소코반 파일 업로드
 
 		fgets(strTemp, sizeof(strTemp), sokobanopen);
 		fgets(strTemp, sizeof(strTemp), sokobanopen);
-		//strTemp에  sokoban.txt 에 있는 맵 저장 
+		//strTemp에  sokoban.txt 에 있는 맵 저장
 		for (k = userlevel; k < 5; k++)
 		{
 			while ((strTemp[sa] != (k + 50)))
@@ -920,7 +918,7 @@ void rankingcompare(int level)
 	{
 		for (i = 0; i < 4; i++)
 		{
-			if (rankcount[level][i] > usercount || rankcount[level][i] == 0) // rankcount[level][i]보다 usercount가 작거나, rankcount[level][i] == 0 일때 
+			if (rankcount[level][i] > usercount || rankcount[level][i] == 0) // rankcount[level][i]보다 usercount가 작거나, rankcount[level][i] == 0 일때
 			{
 				for (j = 0; j < 4 - i; j++) // rankcount 한칸 뒤로 밀기
 				{
@@ -937,11 +935,11 @@ void rankingcompare(int level)
 				for (k = 0; k < 11; k++) {
 					rankname[level][i][k] = username[k]; // username , rankname에 넣기
 				}
-				rankcount[level][i] = usercount; //usercount , rankcount에 넣기 
+				rankcount[level][i] = usercount; //usercount , rankcount에 넣기
 				break;
 			}
 		}
-		if (rankcount[level][i] > usercount || rankcount[level][i] == 0) // rankcount[level][i]가 usercount보다 작거나, rankcount == 0일때 
+		if (rankcount[level][i] > usercount || rankcount[level][i] == 0) // rankcount[level][i]가 usercount보다 작거나, rankcount == 0일때
 		{
 			rankcount[level][i] = usercount; //rankcount 에 usercount 넣기
 
@@ -982,7 +980,7 @@ void rankingview(int level)
 				else
 				{
 					rankingcompare(level); //level의 ranking 비교하기
-					
+
 				}
 				for (j = 0; j < 3; j++)
 				{
@@ -1019,7 +1017,7 @@ void rankingview(int level)
 				printf("Hello %s\n", username);
 				rankingcompare(userlevel);
 
-				
+
 				for (i = 0; i < 5; i++)
 				{
 					printf("map %d\n", i + 1);
@@ -1027,7 +1025,7 @@ void rankingview(int level)
 					{
 						rankinguproad();
 					}
-					else 
+					else
 					{
 						rankingcompare(i); //level의 ranking 비교하기
 
@@ -1065,7 +1063,7 @@ void rankingview(int level)
 			printf("(Command)");
 			printf("%3c %c", ch, ch2);
 			input = getch();
-
+			MapClear();
 
 
 		}
@@ -1105,7 +1103,7 @@ void rankingsave()
 	FILE* ranksave;
 	int i, j;
 
-	if (!rank_bool) // rankview를 실행하지 않고 ranking파일을  저장 하는 경우 
+	if (!rank_bool) // rankview를 실행하지 않고 ranking파일을  저장 하는 경우
 	{
 		rankingcompare(userlevel);
 
@@ -1125,7 +1123,7 @@ void rankingsave()
 			{
 				fprintf(ranksave, "---");
 			}
-			//아니라면 원래 이름대로 저장 
+			//아니라면 원래 이름대로 저장
 			else
 			{
 				fprintf(ranksave, "%s", rankname[i][j]);
@@ -1151,10 +1149,10 @@ void rankinguproad()
 	int ret;
 	rankopen = fopen("ranking.txt", "r");
 
-	if (rankopen == NULL) // ranking 파일이 없을 경우 
+	if (rankopen == NULL) // ranking 파일이 없을 경우
 	{
 		rankingreset(); // ranking 초기화
-		rankingsave(); // ranking파일 저장 
+		rankingsave(); // ranking파일 저장
 
 
 	}
@@ -1167,7 +1165,7 @@ void rankinguproad()
 	{
 		for (j = 0; j < 5; j++) //rank 1,2,3,4,5
 		{
-			ret = fscanf(rankopen, "%s %d", name, &count); // raning파일에서 name이랑 count 받아오기 
+			ret = fscanf(rankopen, "%s %d", name, &count); // raning파일에서 name이랑 count 받아오기
 
 			for (k = 0; k < 11; k++)
 			{
@@ -1195,4 +1193,3 @@ void rankinguproad()
 	fclose(rankopen);
 	return;
 }
-
